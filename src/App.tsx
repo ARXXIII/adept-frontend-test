@@ -3,7 +3,7 @@ import { CompanyTable } from "./components/company-table"
 
 function App() {
     return (
-        <main className="bg-neutral-950 min-h-screen">
+        <main className="bg-neutral-950 h-svh lg:h-screen overflow-hidden">
             <Header />
             <CompanyTable />
         </main>
