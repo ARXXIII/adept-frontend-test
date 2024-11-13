@@ -14,14 +14,25 @@ interface CompaniesState {
 }
 
 const initialState: CompaniesState = {
-	companies: [
-		{ id: '1', name: 'Company A', address: 'Address A', selected: false },
-		{ id: '2', name: 'Company B', address: 'Address B', selected: false },
-		{ id: '3', name: 'Company C', address: 'Address C', selected: false },
-	],
+	companies: [],
 	sortBy: null,
 	sortDirection: 'asc',
 }
+
+// Асинхронный thunk для загрузки данных с API
+// export const fetchCompanies = createAsyncThunk(
+// 	'companies/fetchCompanies',
+// 	async (page: number) => {
+// 		const response = await fetch(
+// 			`https://api.example.com/companies?page=${page}`
+// 		)
+// 		if (!response.ok) {
+// 			throw new Error('Failed to fetch companies')
+// 		}
+// 		const data = await response.json()
+// 		return data
+// 	}
+// )
 
 const companiesSlice = createSlice({
 	name: 'companies',
@@ -38,6 +49,9 @@ const companiesSlice = createSlice({
 			}
 
 			state.companies.push(newCompany)
+		},
+		addCompanies: (state, action: PayloadAction<Company[]>) => {
+			state.companies.push(...action.payload)
 		},
 		removeSelectedCompanies: (state) => {
 			state.companies = state.companies.filter(
@@ -89,10 +103,24 @@ const companiesSlice = createSlice({
 			})
 		},
 	},
+	// extraReducers: (builder) => {
+	// 	builder
+	// 		.addCase(fetchCompanies.pending, (state) => {
+	// 			state.loading = true
+	// 		})
+	// 		.addCase(fetchCompanies.fulfilled, (state, action) => {
+	// 			state.companies = [...state.companies, ...action.payload]
+	// 			state.loading = false
+	// 		})
+	// 		.addCase(fetchCompanies.rejected, (state) => {
+	// 			state.loading = false
+	// 		})
+	// },
 })
 
 export const {
 	addCompany,
+	addCompanies,
 	removeSelectedCompanies,
 	toggleSelectCompany,
 	toggleSelectAll,
