@@ -17,6 +17,7 @@ import {
 
 import { Input } from './input'
 import { Button } from './button'
+import { Switch } from './switch'
 import { FaSortAlphaDown, FaSortAlphaUp } from 'react-icons/fa'
 
 function generateAlphabeticLabel(index: number): string {
@@ -40,28 +41,31 @@ export const CompanyTable = () => {
     const companies = useSelector((state: RootState) => state.companies.companies)
     const sortBy = useSelector((state: RootState) => state.companies.sortBy)
     const sortDirection = useSelector((state: RootState) => state.companies.sortDirection)
+
     const [newCompany, setNewCompany] = useState({ name: '', address: '' })
+    const [generationIsOn, setGenerationIsOn] = useState<boolean>(false)
+
 
     const parentRef = useRef<HTMLDivElement>(null)
 
     const loadMoreCompanies = () => {
-        const fakeCompanies = Array.from({ length: 26 }, (_, index) => ({
+        const fakeCompanies = Array.from({ length: 10 }, (_, index) => ({
             id: `${Date.now()}_${index + 1}`,
             name: `Company ${generateAlphabeticLabel(index)}`,
             address: `Address ${generateAlphabeticLabel(index)}`,
             selected: false,
-        }));
+        }))
 
-        dispatch(addCompanies(fakeCompanies));
+        dispatch(addCompanies(fakeCompanies))
     }
 
     // useEffect(() => {
     //     dispatch(fetchCompanies(page))
     // }, [dispatch, page])
 
-    useEffect(() => {
-        loadMoreCompanies()
-    }, [])
+    // useEffect(() => {
+    //     loadMoreCompanies()
+    // }, [])
 
     const rowVirtualizer = useVirtualizer({
         count: companies.length,
@@ -83,7 +87,7 @@ export const CompanyTable = () => {
 
         if (!lastItem) return
 
-        if (lastItem.index >= companies.length - 1) {
+        if (lastItem.index >= companies.length - 1 && generationIsOn) {
             loadMoreCompanies()
         }
     }, [rowVirtualizer.getVirtualItems()])
@@ -108,7 +112,16 @@ export const CompanyTable = () => {
     }
 
     const handleSort = (field: 'name' | 'address') => {
-        dispatch(sortCompanies(field));
+        dispatch(sortCompanies(field))
+    }
+
+    const handleGenerationSwitch = () => {
+        if (!generationIsOn) {
+            setGenerationIsOn(true)
+            loadMoreCompanies()
+        } else {
+            setGenerationIsOn(false)
+        }
     }
 
     return (
@@ -142,7 +155,13 @@ export const CompanyTable = () => {
                 </div>
             </div>
             <div className='space-y-4'>
-                <h3 className='text-sm text-neutral-500'>Всего компаний: {companies.length.toLocaleString('ru-RU')}</h3>
+                <div className='flex justify-between items-center gap-x-4'>
+                    <h3 className='text-sm text-neutral-500'>Всего компаний: {companies.length.toLocaleString('ru-RU')}</h3>
+                    <div className='flex justify-between items-center gap-x-2'>
+                        <Switch id='generation-switch' onClick={handleGenerationSwitch} />
+                        <label htmlFor="generation-switch" className='hidden lg:block text-sm text-neutral-500 select-none'>Генерация {generationIsOn ? 'on' : 'off'}</label>
+                    </div>
+                </div>
                 <div className='overflow-auto h-[319px] lg:h-[637px]' ref={parentRef}>
                     <div className='border border-gray-500 rounded-md overflow-hidden'>
                         <table className="w-full text-left text-white">
