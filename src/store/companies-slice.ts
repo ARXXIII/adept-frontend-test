@@ -14,7 +14,26 @@ interface CompaniesState {
 }
 
 const initialState: CompaniesState = {
-	companies: [],
+	companies: [
+		{
+			id: '1',
+			name: 'Company TestA',
+			address: 'Address TestA',
+			selected: false,
+		},
+		{
+			id: '2',
+			name: 'Company TestB',
+			address: 'Address TestB',
+			selected: false,
+		},
+		{
+			id: '3',
+			name: 'Company TestC',
+			address: 'Address TestC',
+			selected: false,
+		},
+	],
 	sortBy: null,
 	sortDirection: 'asc',
 }
